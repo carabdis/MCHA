@@ -8,11 +8,30 @@ import json
 import numpy as np
 
 
+def _log_timestep(file_path):
+    """Extract the simulation timestep from a filename such as Log20000.0.json."""
+    filename = file_path.stem
+    prefix = "Log"
+    if not filename.startswith(prefix):
+        raise ValueError(f"Unexpected log filename: {file_path.name}")
+
+    try:
+        return float(filename[len(prefix):])
+    except ValueError as exc:
+        raise ValueError(
+            f"Invalid log filename '{file_path.name}'; expected 'Log<cycle>.json'"
+        ) from exc
+
+
 def IntensityPlot(Folder):
     folder_path = Path(Folder)
     IntenseDict = {}
     TimeStep = []
-    for file_path in folder_path.glob("*.json"):
+    log_files = sorted(folder_path.glob("Log*.json"), key=_log_timestep)
+    if not log_files:
+        raise FileNotFoundError(f"No Log<cycle>.json files found in {folder_path}")
+
+    for file_path in log_files:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             data = {name:np.array(data[name]) for name in data}
@@ -21,10 +40,9 @@ def IntensityPlot(Folder):
                 IntenseDict[name] = [data[name]]
             else:
                 IntenseDict[name].append(data[name])
-        TimeStep.append(float(str(file_path).replace('.json', '').replace(Folder + '/Log', '')))
+        TimeStep.append(_log_timestep(file_path))
     Clock = 5e-9
     TimeStep = [t * Clock for t in TimeStep]
-    TimeStep.sort()
     CompCost = np.array([item.sum() for item in IntenseDict['CoreCompute']])
     DRAMCost = np.array([item[:, :, -1].sum() for item in IntenseDict['ExtChipComm']]) \
              + np.array([item[:, :, :, :, 4].sum() for item in IntenseDict['InBlockComm']]) \
@@ -47,7 +65,7 @@ def IntensityPlot(Folder):
     plt.legend()
     plt.semilogy()
     # plt.show()
-    plt.savefig(Folder + "/Ratio.pdf")
+    plt.savefig(folder_path / "Ratio.pdf")
     return
 
 
