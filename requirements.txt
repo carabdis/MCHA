@@ -1,9 +1,11 @@
-# Direct runtime dependencies for MCHA (tested with Python 3.8).
+# Direct runtime dependencies for MCHA.
+# Minimum versions reflect the original environment while allowing pip to
+# select compatible wheels for the operating system and Python version.
 # Install with: python -m pip install -r requirements.txt
 
-matplotlib>=3.5,<3.8
-numpy==1.22.4
-pandas==1.5.3
-scipy>=1.7,<1.11
-thop==0.1.1.post2209072238
-torch>=1.12,<2.1
+matplotlib>=3.5
+numpy>=1.22.4
+pandas>=1.5.3
+scipy>=1.7
+thop>=0.1.1.post2209072238
+torch>=1.12

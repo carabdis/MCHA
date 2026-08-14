@@ -1,9 +1,11 @@
-This is the README file explain how the dataflow of the example is constructed.
-In brief, the construction process can be divided into 3 steps
+This README file explains how the dataflow of the example is constructed.
+In brief, the construction process can be divided into 3 steps.
 
 # Parameter Definition
-The first step is to define the specific paramters for the simulation.
-These paramters in the main program is read through the "Paramter.json" file, which includes
+The first step is to define the specific parameters for the simulation.
+These parameters in the main program are read from the "Parameter.json" file, which includes:
+
+Note: `Parameter.json` is not included in the current release. The provided example currently defines these parameters directly in [`ExampleConstruct.py`](./ExampleConstruct.py).
 
 - "ChipScale":
 
@@ -39,25 +41,25 @@ These paramters in the main program is read through the "Paramter.json" file, wh
 
 - "ClockCycle":
 
-    The processing clock period whose unit is "ns".
+    The processing clock period, whose unit is "ns".
 
 - "Model":
 
-    The pytorch model describing the updating function of the PSC applications, defining the required storage buffer for the updating function.
+    The PyTorch model describing the update function of the PSC applications and defining the required storage buffer for the update function.
 
-- "Type"
+- "Type":
 
-    The string defines the specific processing type of the simulation.
+    The string that defines the specific processing type of the simulation.
 
 - "TargetTask":
 
-    The dict describes the target PSC task for this simulation.
+    The dict that describes the target PSC task for this simulation.
     This dict includes the following variables, categorized as "block-like" or "graph-like".
-    Details can be found in [FlowGen.py](../Optimizer/FlowGen.py)
+    Details can be found in [FlowGen.py](../Optimizer/FlowGen.py).
 
 # Dataflow Matching
-As mentioned in the MCHA paper, the processing cores required by each layer should be first generated for further computation.
-The detailed computing process can be found in function [Genetic](../Optimizer/Genetic.py).
+As mentioned in the MCHA paper, the processing cores required by each layer should first be generated for further computation.
+The detailed computing process can be found in the function [Genetic](../Optimizer/Genetic.py).
 
 ```ruby
 def Genetic(ChipScale:tuple, BlockScale:tuple, CoreNum:int, DRAMBandWidth:float, Type:str,
@@ -68,6 +70,6 @@ def Genetic(ChipScale:tuple, BlockScale:tuple, CoreNum:int, DRAMBandWidth:float,
 
 # Core Allocation & Dataflow Deployment
 
-The deployment of the cores can be varied depending on the algorithmic definition.
-In this example, we provide a specific example through randomly split the core and select the shortest transmission path for each cores.
-Details can be found in [ExampleConstruct.py](./ExampleConstruct.py)
+The deployment of the cores can vary depending on the algorithmic definition.
+In this example, we provide a specific example by randomly splitting the cores and selecting the shortest transmission path for each core.
+Details can be found in [ExampleConstruct.py](./ExampleConstruct.py).
